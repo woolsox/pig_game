@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/pig'
+require_relative '../lib/player'
+
+players = []
+
+ARGV.each do |arg|
+  player_class = arg
+  if defined?(player_class)
+    players.push(Module.const_get(player_class).new(arg.gsub(/Player$/, "")))
+  end
+end
+
+if players.length < 2
+  players.push(CautiousPlayer.new("Cautious1"))
+end
+if players.length == 1
+  players.push(AveragePlayer.new("Average1"))
+end
+if players.length < 3
+  players.push(RiskyPlayer.new("Risky1"))
+end
+if players.length < 4
+  players.push(NeverPlayer.new("Never1"))
+end
+
+
+pig = Pig.new(*players, games: 1000, silent: true)
+pig.run
